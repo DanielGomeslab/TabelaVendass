@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculador de Munição</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 20px; }
+        .item { margin: 15px; display: inline-block; }
+        input { padding: 8px; width: 80px; margin-left: 10px; }
+        #nome { width: 200px; margin-bottom: 20px; }
+        label { display: block; margin-bottom: 5px; }
+        #total, #total_desconto { font-size: 1.5em; color: #333; margin-top: 20px; }
+        #resumo { background: #f9f9f9; padding: 15px; margin: 20px auto; width: 80%; text-align: left; border: 1px solid #ddd; white-space: pre-line; }
+        button { padding: 10px 20px; background: #f44336; color: white; border: none; cursor: pointer; margin: 10px; }
+        button:hover { background: #d32f2f; }
+        #copiar { background: #2196F3; }
+        #copiar:hover { background: #1976D2; }
+    </style>
+</head>
+<body>
+    <h1>Calculador de Munição</h1>
+    <p>Insira o nome (opcional) e as quantidades e veja o total em tempo real.</p>
+
+    <label for="nome">Nome:</label>
+    <input type="text" id="nome" placeholder="Digite o nome">
+
+    <div class="item">
+        <label>Pistola (R$ 440 cada)</label>
+        <input type="number" id="Pistola" min="0" value="0">
+        <span>Subtotal: R$ <span id="sub_Pistola">0.00</span></span>
+    </div>
+
+    <div class="item">
+        <label>Sub (R$ 600 cada)</label>
+        <input type="number" id="Sub" min="0" value="0">
+        <span>Subtotal: R$ <span id="sub_Sub">0.00</span></span>
+    </div>
+
+    <div class="item">
+        <label>Fuzil (R$ 1040 cada)</label>
+        <input type="number" id="Fuzil" min="0" value="0">
+        <span>Subtotal: R$ <span id="sub_Fuzil">0.00</span></span>
+    </div>
+
+    <div class="item">
+        <label>Escopeta (R$ 1100 cada)</label>
+        <input type="number" id="Escopeta" min="0" value="0">
+        <span>Subtotal: R$ <span id="sub_Escopeta">0.00</span></span>
+    </div>
+
+    <h2>Total Geral: R$ <span id="total">0.00</span></h2>
+    <h2>Depositar no painel (-20%): R$ <span id="total_desconto">0.00</span></h2>
+
+    <h3>Resumo dos Itens Adicionados:</h3>
+    <div id="resumo">Nenhum item adicionado ainda.</div>
+
+    <button onclick="limpar()">Limpar Tudo</button>
+    <button id="copiar" onclick="copiarResumo()">Copiar Resumo</button>
+
+    <script>
+        const precos = {
+            Pistola: 440,
+            Sub: 600,
+            Fuzil: 1040,
+            Escopeta: 1100
+        };
+
+        function calcular() {
+            let total = 0;
+            let resumoTexto = '';
+
+            const nome = document.getElementById('nome').value.trim();
+            if (nome) {
+                resumoTexto += `Nome: ${nome}\n\n`;
+            }
+
+            for (const cor in precos) {
+                const qtd = parseInt(document.getElementById(cor).value) || 0;
+                const sub = qtd * precos[cor];
+                document.getElementById(`sub_${cor}`).textContent = sub.toFixed(2);
+                total += sub;
+
+                if (qtd > 0) {
+                    resumoTexto += `Item: ${cor.charAt(0).toUpperCase() + cor.slice(1)}, quant: ${qtd}, Valor: R$ ${sub.toFixed(2)}\n`;
+                }
+            }
+
+            document.getElementById('total').textContent = total.toFixed(2);
+            const desconto = total * 0.20;
+            const totalComDesconto = total - desconto;
+            document.getElementById('total_desconto').textContent = totalComDesconto.toFixed(2);
+
+            if (resumoTexto === '' || (!nome && total === 0)) {
+                resumoTexto = 'Nenhum item adicionado ainda.';
+            } else {
+                resumoTexto += `\nTotal Geral: R$ ${total.toFixed(2)}\nDepositar no painel (-20%): R$ ${totalComDesconto.toFixed(2)}`;
+            }
+            document.getElementById('resumo').textContent = resumoTexto;
+        }
+
+        function limpar() {
+            document.getElementById('nome').value = '';
+            for (const cor in precos) {
+                document.getElementById(cor).value = 0;
+                document.getElementById(`sub_${cor}`).textContent = '0.00';
+            }
+            document.getElementById('total').textContent = '0.00';
+            document.getElementById('total_desconto').textContent = '0.00';
+            document.getElementById('resumo').textContent = 'Nenhum item adicionado ainda.';
+        }
+
+        function copiarResumo() {
+            const resumo = document.getElementById('resumo').textContent;
+            navigator.clipboard.writeText(resumo).then(() => {
+                alert('Resumo copiado para a área de transferência!');
+            }).catch(err => {
+                alert('Erro ao copiar: ' + err);
+            });
+        }
+
+        // Adiciona event listeners para atualização em tempo real
+        document.getElementById('nome').addEventListener('input', calcular);
+        for (const cor in precos) {
+            document.getElementById(cor).addEventListener('input', calcular);
+        }
+
+        // Calcula inicialmente
+        calcular();
+    </script>
+</body>
+</html>
