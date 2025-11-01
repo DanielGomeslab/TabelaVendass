@@ -1,133 +1,448 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculador de Munição</title>
-    <style>
-        body { font-family: Arial, sans-serif; text-align: center; margin: 20px; }
-        .item { margin: 15px; display: inline-block; }
-        input { padding: 8px; width: 80px; margin-left: 10px; }
-        #nome { width: 200px; margin-bottom: 20px; }
-        label { display: block; margin-bottom: 5px; }
-        #total, #total_desconto { font-size: 1.5em; color: #333; margin-top: 20px; }
-        #resumo { background: #f9f9f9; padding: 15px; margin: 20px auto; width: 80%; text-align: left; border: 1px solid #ddd; white-space: pre-line; }
-        button { padding: 10px 20px; background: #f44336; color: white; border: none; cursor: pointer; margin: 10px; }
-        button:hover { background: #d32f2f; }
-        #copiar { background: #2196F3; }
-        #copiar:hover { background: #1976D2; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calculadora CPX Rocinha</title>
+  <style>
+    
+    :root {
+      --bg: radial-gradient(circle at top left, #0c0c0f, #09090b 80%);
+      --card-bg: rgba(26,26,29,0.88);
+      --text: #f5f5f5;
+      --muted: #a7a7a7;
+      --accent: #ff2d95;
+      --accent-light: #ff70b4;
+      --border: #2a2a2d;
+      --glow: 0 0 12px rgba(255,45,149,0.35);
+      --transition: all 0.3s ease;
+      --blur: blur(8px);
+    }
+
+    .light-theme {
+      --bg: linear-gradient(145deg, #fdf0f6, #f5f5f5);
+      --card-bg: rgba(255,255,255,0.55);
+      --text: #111;
+      --muted: #444;
+      --accent: #ff2d95;
+      --accent-light: #ff70b4;
+      --border: rgba(255,45,149,0.2);
+      --glow: 0 0 25px rgba(255,45,149,0.3);
+      --blur: blur(18px) saturate(180%);
+    }
+
+    * { box-sizing: border-box; margin:0; padding:0; }
+    body {
+      font-family: "Inter", "Segoe UI", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 10px 0;
+      transition: var(--transition);
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      overflow: hidden;
+    }
+
+header img.logo {
+  width: 180px;
+  max-width: 70%;
+  height: auto;
+  filter: drop-shadow(0 0 8px rgba(255,45,149,0.6));
+  transition: var(--transition);
+  border-radius: 10px;
+  display: block;
+}
+
+.logo-container {
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  border-radius: 10px;
+  overflow: hidden;
+  display: inline-block;
+}
+
+@supports not ((backdrop-filter: blur(8px)) or (-webkit-backdrop-filter: blur(8px))) {
+  .logo-container {
+    background-color: rgba(26,26,29,0.85);
+  }
+}
+
+    #themeToggle {
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      transition: var(--transition);
+      color: var(--accent);
+      position: relative;
+    }
+
+    #themeToggle svg {
+      width: 24px;
+      height: 24px;
+      transition: transform 0.6s ease, opacity 0.3s ease;
+      position: absolute;
+    }
+
+    #themeToggle:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 8px rgba(255,45,149,0.4);
+    }
+
+    h1 {
+      font-size: 1.6em;
+      background: linear-gradient(90deg, var(--accent), var(--accent-light));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 700;
+      margin-bottom: 3px;
+      width: 100%;
+      text-align: center;
+    }
+
+    p.subtext {
+      color: var(--muted);
+      font-size: 0.9em;
+      margin-bottom: 18px;
+      width: 100%;
+      text-align: center;
+    }
+
+    main {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      width: 95%;
+      max-width: 460px;
+      box-shadow: 0 0 14px rgba(255,45,149,0.15);
+      backdrop-filter: var(--blur);
+      transition: var(--transition);
+    }
+
+    main:hover { box-shadow: 0 0 22px rgba(255,45,149,0.25); }
+
+    label { display: block; font-weight: 500; font-size: 0.9em; margin-bottom: 5px; }
+    input[type="text"], input[type="number"] {
+      background: #121214;
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 8px 10px;
+      font-size: 0.9em;
+      width: 100%;
+      outline: none;
+      transition: var(--transition);
+    }
+
+    .light-theme input[type="text"], .light-theme input[type="number"] {
+      background: rgba(255,255,255,0.9);
+      color: #111;
+      border: 1px solid #ddd;
+      backdrop-filter: var(--blur);
+    }
+
+    input:focus { border-color: var(--accent); box-shadow: var(--glow); }
+    #nome { margin-bottom: 14px; }
+
+    .item {
+      background: rgba(18,18,20,0.9);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+      transition: var(--transition);
+      backdrop-filter: var(--blur);
+    }
+
+    .light-theme .item {
+      background: rgba(255,255,255,0.65);
+      border-color: rgba(255,45,149,0.15);
+    }
+
+    .item:hover {
+      border-color: var(--accent);
+      box-shadow: 0 0 8px rgba(255,45,149,0.25);
+      transform: translateY(-1px);
+    }
+
+    .item label { flex:1; font-size: 0.88em; }
+    .item span { font-size: 0.8em; color: var(--muted); white-space: nowrap; }
+
+    h2 {
+      margin-top: 14px;
+      font-size: 1.05em;
+      text-align: center;
+      color: var(--accent-light);
+    }
+
+    h3 {
+      margin-top: 18px;
+      font-size: 0.95em;
+      text-align: center;
+      color: var(--text);
+      border-top: 1px solid var(--border);
+      padding-top: 8px;
+    }
+
+    #resumo {
+      background: rgba(15,15,17,0.9);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px;
+      margin-top: 8px;
+      white-space: pre-line;
+      color: var(--muted);
+      font-family: monospace;
+      font-size: 0.8em;
+      min-height: 70px;
+      transition: var(--transition);
+      backdrop-filter: var(--blur);
+    }
+
+    .light-theme #resumo {
+      background: rgba(255,255,255,0.7);
+      border-color: rgba(255,45,149,0.25);
+      color: #333;
+    }
+
+    #resumo:hover { border-color: var(--accent); box-shadow: var(--glow); }
+
+    button {
+      padding: 9px 18px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9em;
+      margin: 10px 4px 0;
+      transition: var(--transition);
+      font-weight: 500;
+    }
+
+    #limpar { background: #2d2d2d; color: var(--text); }
+    .light-theme #limpar { background: #ddd; color: #111; }
+
+    #limpar:hover { background: #3a3a3a; box-shadow: 0 0 6px rgba(255,255,255,0.1); }
+    .light-theme #limpar:hover { background: #ccc; }
+
+    #copiar {
+      background: linear-gradient(90deg, var(--accent), var(--accent-light));
+      color: #fff;
+      box-shadow: 0 0 14px rgba(255,45,149,0.3);
+    }
+
+    #copiar:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 0 20px rgba(255,45,149,0.5);
+    }
+
+    footer {
+      margin: 18px 0 8px;
+      color: var(--muted);
+      font-size: 0.8em;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 500px) {
+      body { padding:8px; }
+      header { gap: 6px; margin-bottom: 8px; }
+      h1 { font-size: 1.4em; }
+      main { padding:12px; width:100%; }
+      .item { flex-direction: column; align-items:flex-start; }
+      input[type="number"] { width:100%; }
+      button { width:100%; margin:8px 0; }
+      p.subtext { margin-bottom: 12px; }
+    }
+  </style>
 </head>
 <body>
-    <h1>Calculador de Munição</h1>
-    <p>Insira o nome e as quantidades e veja o total em tempo real.</p>
 
+  <header>
+     <div class="logo-container">
+    <img
+      class="logo"
+      src="https://cdn.discordapp.com/attachments/1350506525960962151/1433631936936415363/image-removebg-preview.png?ex=69056549&is=690413c9&hm=cce75dab1bd388038d10ba9e114c2ace221e135b7269478ad9a996e407ab7c13&"
+      alt="Logo ROCINHA"
+    />
+  </div>
+    <button id="themeToggle" aria-label="Alternar tema">
+      <svg id="moonIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="opacity:1;">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+      </svg>
+      <svg id="sunIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="opacity:0;">
+        <circle cx="12" cy="12" r="5"/>
+        <line x1="12" y1="1" x2="12" y2="3"/>
+        <line x1="12" y1="21" x2="12" y2="23"/>
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+        <line x1="1" y1="12" x2="3" y2="12"/>
+        <line x1="21" y1="12" x2="23" y2="12"/>
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+      </svg>
+    </button>
+
+    <h1>Calculador de Produtos (Munição)</h1>
+    <p class="subtext">Insira o nome e as quantidades e veja o total em tempo real.</p>
+  </header>
+
+  <main>
     <label for="nome">Nome:</label>
-    <input type="text" id="nome" placeholder="Digite o nome">
+    <input type="text" id="nome" placeholder="Digite o nome" />
 
     <div class="item">
-        <label>Pistola (R$ 440 cada)</label>
-        <input type="number" id="Pistola" min="0" value="0">
-        <span>Subtotal: R$ <span id="sub_Pistola">0.00</span></span>
+      <label>Pistola (R$ 440 cada)</label>
+      <input type="number" id="Pistola" min="0" value="0" />
+      <span>Subtotal: R$ <span id="sub_Pistola">0.00</span></span>
     </div>
 
     <div class="item">
-        <label>Sub (R$ 600 cada)</label>
-        <input type="number" id="Sub" min="0" value="0">
-        <span>Subtotal: R$ <span id="sub_Sub">0.00</span></span>
+      <label>Sub (R$ 600 cada)</label>
+      <input type="number" id="Sub" min="0" value="0" />
+      <span>Subtotal: R$ <span id="sub_Sub">0.00</span></span>
     </div>
 
     <div class="item">
-        <label>Fuzil (R$ 1040 cada)</label>
-        <input type="number" id="Fuzil" min="0" value="0">
-        <span>Subtotal: R$ <span id="sub_Fuzil">0.00</span></span>
+      <label>Fuzil (R$ 1 040 cada)</label>
+      <input type="number" id="Fuzil" min="0" value="0" />
+      <span>Subtotal: R$ <span id="sub_Fuzil">0.00</span></span>
     </div>
 
     <div class="item">
-        <label>Escopeta (R$ 1100 cada)</label>
-        <input type="number" id="Escopeta" min="0" value="0">
-        <span>Subtotal: R$ <span id="sub_Escopeta">0.00</span></span>
+      <label>Escopeta (R$ 1 100 cada)</label>
+      <input type="number" id="Escopeta" min="0" value="0" />
+      <span>Subtotal: R$ <span id="sub_Escopeta">0.00</span></span>
     </div>
 
-    <h2>Total Geral: R$ <span id="total">0.00</span></h2>
-    <h2>Depositar no painel (-20%): R$ <span id="total_desconto">0.00</span></h2>
+    <h2>Total: R$ <span id="total">0.00</span></h2>
+    <h2>Depositar no Painel (80%): R$ <span id="total_desconto">0.00</span></h2>
+    <h2>Comissão Pessoal (20%): R$ <span id="comissao_pessoal">0.00</span></h2>
+    <h3>Resumo</h3>
+    <pre id="resumo">Nenhum item adicionado ainda.</pre>
 
-    <h3>Resumo dos Itens Adicionados:</h3>
-    <div id="resumo">Nenhum item adicionado ainda.</div>
+    <button id="limpar">Limpar</button>
+    <button id="copiar">Copiar Resumo</button>
+  </main>
 
-    <button onclick="limpar()">Limpar Tudo</button>
-    <button id="copiar" onclick="copiarResumo()">Copiar Resumo</button>
+  <footer>
+    Calculadora de Produtos - Criada por CPXROCINHA™ - by dnsxyz 👻
+  </footer>
 
-    <script>
-        const precos = {
-            Pistola: 440,
-            Sub: 600,
-            Fuzil: 1040,
-            Escopeta: 1100
-        };
+<script>
+  const precos = {
+    Pistola: 440,
+    Sub: 600,
+    Fuzil: 1040,
+    Escopeta: 1100
+  };
 
-        function calcular() {
-            let total = 0;
-            let resumoTexto = '';
+  function calcular() {
+    let total = 0;
+    let resumoTexto = '';
 
-            const nome = document.getElementById('nome').value.trim();
-            if (nome) {
-                resumoTexto += `Nome: ${nome}\n\n`;
-            }
+    const nome = document.getElementById('nome').value.trim();
+    if (nome) {
+      resumoTexto += `Nome: ${nome}\n\n`;
+    }
 
-            for (const cor in precos) {
-                const qtd = parseInt(document.getElementById(cor).value) || 0;
-                const sub = qtd * precos[cor];
-                document.getElementById(`sub_${cor}`).textContent = sub.toFixed(2);
-                total += sub;
+    for (const cor in precos) {
+      const qtd = parseInt(document.getElementById(cor).value) || 0;
+      const sub = qtd * precos[cor];
+      document.getElementById(`sub_${cor}`).textContent = sub;
+      total += sub;
 
-                if (qtd > 0) {
-                    resumoTexto += `Item: ${cor.charAt(0).toUpperCase() + cor.slice(1)}, quant: ${qtd}, Valor: R$ ${sub.toFixed(2)}\n`;
-                }
-            }
+      if (qtd > 0) {
+        resumoTexto += `Item: ${cor.charAt(0).toUpperCase() + cor.slice(1)}, quant: ${qtd}, Valor: R$ ${sub}\n`;
+      }
+    }
 
-            document.getElementById('total').textContent = total.toFixed(2);
-            const desconto = total * 0.20;
-            const totalComDesconto = total - desconto;
-            document.getElementById('total_desconto').textContent = totalComDesconto.toFixed(2);
+    document.getElementById('total').textContent = total;
+    const desconto = total * 0.20;
+    const totalComDesconto = total - desconto;
+    const comissao = total * 0.80
+    const totalcomissao = total - comissao
+    document.getElementById('total_desconto').textContent = totalComDesconto;
+    document.getElementById('comissao_pessoal').textContent = totalcomissao;
 
-            if (resumoTexto === '' || (!nome && total === 0)) {
-                resumoTexto = 'Nenhum item adicionado ainda.';
-            } else {
-                resumoTexto += `\nTotal Geral: R$ ${total.toFixed(2)}\nDepositar no painel (-20%): R$ ${totalComDesconto.toFixed(2)}`;
-            }
-            document.getElementById('resumo').textContent = resumoTexto;
-        }
 
-        function limpar() {
-            document.getElementById('nome').value = '';
-            for (const cor in precos) {
-                document.getElementById(cor).value = 0;
-                document.getElementById(`sub_${cor}`).textContent = '0.00';
-            }
-            document.getElementById('total').textContent = '0.00';
-            document.getElementById('total_desconto').textContent = '0.00';
-            document.getElementById('resumo').textContent = 'Nenhum item adicionado ainda.';
-        }
+    if (resumoTexto === '' || (!nome && total === 0)) {
+      resumoTexto = 'Nenhum item adicionado ainda.';
+    } else {
+      resumoTexto += `\nTotal Geral (100%): R$ ${total}\nDepositar no painel (80%): R$ ${totalComDesconto}\n Comissão pessoal (20%): R$ ${totalcomissao}`;
+    }
+    document.getElementById('resumo').textContent = resumoTexto;
+  }
 
-        function copiarResumo() {
-            const resumo = document.getElementById('resumo').textContent;
-            navigator.clipboard.writeText(resumo).then(() => {
-                alert('Resumo copiado para a área de transferência!');
-            }).catch(err => {
-                alert('Erro ao copiar: ' + err);
-            });
-        }
+  function limpar() {
+    document.getElementById('nome').value = '';
+    for (const cor in precos) {
+      document.getElementById(cor).value = 0;
+      document.getElementById(`sub_${cor}`).textContent = '0.00';
+    }
+    document.getElementById('total').textContent = '0.00';
+    document.getElementById('total_desconto').textContent = '0.00';
+    document.getElementById('resumo').textContent = 'Nenhum item adicionado ainda.';
+  }
 
-        // Adiciona event listeners para atualização em tempo real
-        document.getElementById('nome').addEventListener('input', calcular);
-        for (const cor in precos) {
-            document.getElementById(cor).addEventListener('input', calcular);
-        }
+  function copiarResumo() {
+    const resumo = document.getElementById('resumo').textContent;
+    navigator.clipboard.writeText(resumo).then(() => {
+      alert('Resumo copiado para a área de transferência!');
+    }).catch(err => {
+      alert('Erro ao copiar: ' + err);
+    });
+  }
 
-        // Calcula inicialmente
-        calcular();
-    </script>
+  const themeToggle = document.getElementById("themeToggle");
+  const body = document.body;
+  const moonIcon = document.getElementById("moonIcon");
+  const sunIcon = document.getElementById("sunIcon");
+
+  themeToggle.addEventListener("click", () => {
+    body.classList.toggle("light-theme");
+    if (body.classList.contains("light-theme")) {
+      moonIcon.style.opacity = "0";
+      sunIcon.style.opacity = "1";
+    } else {
+      moonIcon.style.opacity = "1";
+      sunIcon.style.opacity = "0";
+    }
+  });
+
+  document.getElementById('nome').addEventListener('input', calcular);
+  for (const cor in precos) {
+    document.getElementById(cor).addEventListener('input', calcular);
+  }
+
+  document.getElementById('limpar').addEventListener('click', limpar);
+  document.getElementById('copiar').addEventListener('click', copiarResumo);
+
+  calcular();
+</script>
+
 </body>
-
 </html>
