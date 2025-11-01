@@ -307,7 +307,6 @@ header img.logo {
     </button>
 
     <h1>Calculador de Produtos (Munição)</h1>
-    <p class="subtext">Insira o nome e as quantidades e veja o total em tempo real.</p>
   </header>
 
   <main>
@@ -366,7 +365,7 @@ header img.logo {
 
     const nome = document.getElementById('nome').value.trim();
     if (nome) {
-      resumoTexto += `Nome: ${nome}\n\n`;
+      resumoTexto += `**Nome**: ${nome}\n\n`;
     }
 
     for (const cor in precos) {
@@ -376,7 +375,7 @@ header img.logo {
       total += sub;
 
       if (qtd > 0) {
-        resumoTexto += `Item: ${cor.charAt(0).toUpperCase() + cor.slice(1)}, quant: ${qtd}, Valor: R$ ${sub}\n`;
+        resumoTexto += `**Item**: ${cor.charAt(0).toUpperCase() + cor.slice(1)}, quant: ${qtd}, Valor: R$ ${sub}\n`;
       }
     }
 
@@ -392,7 +391,7 @@ header img.logo {
     if (resumoTexto === '' || (!nome && total === 0)) {
       resumoTexto = 'Nenhum item adicionado ainda.';
     } else {
-      resumoTexto += `\nTotal Geral (100%): R$ ${total}\nDepositar no painel (80%): R$ ${totalComDesconto}\n Comissão pessoal (20%): R$ ${totalcomissao}`;
+      resumoTexto += `\n **Total Geral** (100%): R$ ${total}\n **Depositar no painel** (80%): R$ ${totalComDesconto}\n **Comissão pessoal** (20%): R$ ${totalcomissao}`;
     }
     document.getElementById('resumo').textContent = resumoTexto;
   }
@@ -446,4 +445,5 @@ header img.logo {
 
 </body>
 </html>
+
 
