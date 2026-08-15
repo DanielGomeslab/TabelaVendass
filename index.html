@@ -170,11 +170,11 @@
             </div>
 
             <div class="item-linha">
-                <span>Bandagem <span class="label-preco">R$ 2.000,00</span></span>
+                <span>Adrenalina <span class="label-preco">R$ 15.000,00</span></span>
                 <div class="controles">
-                    <button class="btn-qty" onclick="alterarQty(&#39;qtyBandagem&#39;, -1)">-</button>
+                    <button class="btn-qty" onclick="alterarQty(&#39;qtyAdrenalina&#39;, -1)">-</button>
                     <input type="number" id="qtyBandagem" class="qty-val" value="0" min="0" oninput="calcular()">
-                    <button class="btn-qty plus" onclick="alterarQty(&#39;qtyBandagem&#39;, 1)">+</button>
+                    <button class="btn-qty plus" onclick="alterarQty(&#39;qtyAdrenalina&#39;, 1)">+</button>
                 </div>
             </div>
         </div>
@@ -224,7 +224,7 @@
             ((parseInt(document.getElementById('qtyAnalgésico')?.value) || 0) * 1000) +
             ((parseInt(document.getElementById('qtyAlcoolGel')?.value) || 0) * 2000) +
             ((parseInt(document.getElementById('qtyBolsaMedica')?.value) || 0) * 6000) +
-            ((parseInt(document.getElementById('qtyBandagem')?.value) || 0) * 2000);
+            ((parseInt(document.getElementById('qtyAdrenalina')?.value) || 0) * 15000);
 
         let totalFinal = baseOriginal + totalProdutos;
 
